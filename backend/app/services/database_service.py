@@ -16,13 +16,14 @@ class DatabaseService:
     async def create_travel_request(
         self, 
         request_data: TravelRequestCreate, 
-        response_json: List[Dict[str, Any]]
+        response_json: List[Dict[str, Any]],
+        exclusions: List[str] = None
     ) -> TravelRequest:
         """Create new travel request"""
         try:
             db_request = TravelRequest(
                 text=request_data.text,
-                exclude=request_data.exclude,
+                exclude=exclusions or [],
                 num_places=request_data.num_places,
                 response_json=response_json
             )
@@ -47,6 +48,29 @@ class DatabaseService:
         except Exception as e:
             raise DatabaseError(f"Failed to get travel request: {str(e)}")
     
+    async def get_recent_requests(self, limit: int = 5) -> List[Dict[str, Any]]:
+        """Get recent requests for context building"""
+        try:
+            result = await self.db.execute(
+                select(TravelRequest)
+                .order_by(TravelRequest.created_at.desc())
+                .limit(limit)
+            )
+            requests = result.scalars().all()
+            
+            return [
+                {
+                    "text": request.text,
+                    "exclude": request.exclude,
+                    "num_places": request.num_places,
+                    "created_at": request.created_at
+                }
+                for request in requests
+            ]
+            
+        except Exception as e:
+            raise DatabaseError(f"Failed to get recent requests: {str(e)}")
+    
     async def get_all_travel_requests(
         self, 
         limit: int = 10, 
@@ -64,29 +88,6 @@ class DatabaseService:
             
         except Exception as e:
             raise DatabaseError(f"Failed to get travel requests: {str(e)}")
-    
-    async def update_travel_request(
-        self, 
-        request_id: int, 
-        exclude: List[str], 
-        response_json: List[Dict[str, Any]]
-    ) -> Optional[TravelRequest]:
-        """Update travel request"""
-        try:
-            request = await self.get_travel_request_by_id(request_id)
-            if not request:
-                return None
-            
-            request.exclude = exclude
-            request.response_json = response_json
-            
-            await self.db.commit()
-            await self.db.refresh(request)
-            return request
-            
-        except Exception as e:
-            await self.db.rollback()
-            raise DatabaseError(f"Failed to update travel request: {str(e)}")
     
     async def delete_travel_request(self, request_id: int) -> bool:
         """Delete travel request"""

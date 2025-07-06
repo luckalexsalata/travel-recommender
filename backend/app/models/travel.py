@@ -7,7 +7,7 @@ class TravelRequest(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     text = Column(Text, nullable=False)  # User's request text
-    exclude = Column(JSON, nullable=True)  # List of places to exclude
+    exclude = Column(JSON, default=list)  # Excluded places
     num_places = Column(Integer, default=3)  # Number of places to recommend
     response_json = Column(JSON, nullable=False)  # AI response with places
     created_at = Column(DateTime(timezone=True), server_default=func.now()) 
