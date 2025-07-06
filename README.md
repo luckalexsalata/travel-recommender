@@ -1,179 +1,193 @@
-# Travel Recommender API
+# 🗺️ Travel Recommender
 
-FastAPI сервіс для генерації туристичних рекомендацій з використанням OpenAI API.
+AI-powered travel recommendation system with modern web interface.
 
-## 🚀 Функціональність
+## 🏗️ Architecture
 
-- Генерація туристичних рекомендацій на основі текстового запиту
-- Підтримка різних мов (відповідь тією ж мовою, що й запит)
-- Чат-подібна взаємодія з можливістю уточнень та виключень
-- Автоматичне виявлення виключень з тексту користувача
-- Автоматичне накопичення виключень з попередніх запитів
-- Збереження історії запитів у SQLite
-- Retry-логіка для OpenAI API
-- Swagger UI для тестування
+- **Backend**: FastAPI + SQLAlchemy + OpenAI API
+- **Frontend**: Next.js 14 + TypeScript + Tailwind CSS
+- **Database**: SQLite (async with aiosqlite)
+- **AI**: OpenAI GPT for intelligent recommendations
 
-## 📋 Вимоги
+## 🚀 Quick Start
 
+### Prerequisites
 - Python 3.8+
-- OpenAI API ключ
+- Node.js 18+
+- OpenAI API key
 
-## 🛠 Встановлення
+### Backend Setup
 
-1. **Клонуйте репозиторій:**
-```bash
-git clone <repository-url>
-cd travel-recommender
-```
-
-2. **Перейдіть в папку backend:**
 ```bash
 cd backend
-```
-
-3. **Створіть віртуальне середовище:**
-```bash
-python3 -m venv venv
-source venv/bin/activate  # Linux/Mac
-# або
-venv\Scripts\activate  # Windows
-```
-
-4. **Встановіть залежності:**
-```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
+
+# Create .env file
+cp .env.example .env
+# Add your OPENAI_API_KEY to .env
+
+# Run backend
+python run.py
 ```
 
-5. **Налаштуйте змінні середовища:**
+Backend will be available at `http://localhost:8000`
+
+### Frontend Setup
+
 ```bash
-cp env_example.txt .env
+cd frontend
+npm install
+npm run dev
 ```
 
-Відредагуйте `.env` файл:
+Frontend will be available at `http://localhost:3000`
+
+## 🎯 Features
+
+### Backend API
+- 🤖 OpenAI GPT integration for intelligent recommendations
+- 💬 Chat-like interaction with context memory
+- 🗄️ SQLite database with async operations
+- 📊 Full CRUD operations for recommendations
+- 🔍 Search and statistics endpoints
+- 🛡️ CORS enabled for frontend integration
+- 🎯 Specific place recommendations (not just cities)
+
+### Frontend Interface
+- 💬 Modern chat-like UI with separate pages
+- 🗺️ Beautiful recommendation cards
+- ⚙️ Configurable number of places
+- 📱 Responsive design
+- 🚫 Visual exclusion tracking
+- ⚡ Real-time interactions
+- 📚 History page with delete functionality
+- 🔄 Clear all button for chat sessions
+
+
+## 📋 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/recommendations/` | Create new recommendation |
+| GET | `/api/v1/recommendations/` | Get all recommendations |
+| GET | `/api/v1/recommendations/{id}` | Get specific recommendation |
+| GET | `/api/v1/recommendations/search/{query}` | Search recommendations |
+| GET | `/api/v1/recommendations/stats/` | Get statistics |
+| DELETE | `/api/v1/recommendations/{id}` | Delete recommendation |
+
+## 🌐 Frontend Routes
+
+| Route | Description |
+|-------|-------------|
+| `/` | Redirects to `/chat` |
+| `/chat` | Chat interface with AI |
+| `/history` | History of all recommendations |
+
+## 🗂️ Project Structure
+
+```
+travel-recommender/
+├── backend/
+│   ├── app/
+│   │   ├── api/           # API routes
+│   │   ├── core/          # Configuration & database
+│   │   ├── models/        # SQLAlchemy models
+│   │   ├── schemas/       # Pydantic schemas
+│   │   └── services/      # Business logic
+│   ├── tests/             # Test suite
+│   └── requirements.txt   # Python dependencies
+├── frontend/
+│   ├── src/
+│   │   └── app/           # Next.js app directory
+│   │       ├── chat/      # Chat page
+│   │       ├── history/   # History page
+│   │       └── components/ # React components
+│   └── package.json       # Node.js dependencies
+├── docs/
+│   └── images/            # Screenshots and documentation
+└── README.md
+```
+
+## 🧪 Testing
+
+### Backend Tests
+```bash
+cd backend
+python -m pytest tests/
+```
+
+### Frontend Tests
+```bash
+cd frontend
+npm test
+```
+
+## 🔧 Configuration
+
+### Environment Variables (Backend)
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_API_KEY=your_openai_api_key
 DATABASE_URL=sqlite+aiosqlite:///./travel_recommender.db
 HOST=0.0.0.0
 PORT=8000
 ```
 
-## 🚀 Запуск
+## 🌟 Key Features
 
+- **Intelligent Recommendations**: Uses OpenAI GPT to understand user preferences
+- **Specific Places**: Recommends restaurants, attractions, neighborhoods within cities
+- **Context Memory**: Remembers previous exclusions and preferences
+- **Natural Language**: Users can write requests in natural language
+- **Real-time Chat**: Instant responses with loading states
+- **Persistent Storage**: All recommendations saved to database
+- **Modern UI**: Beautiful, responsive interface
+- **Full Stack**: Complete frontend + backend solution
+- **History Management**: View and delete past recommendations
+
+## 📝 Usage Examples
+
+1. **Initial Request**: "Хочу в Рим, люблю історію та макарони"
+   - AI recommends: Specific restaurants, monuments, neighborhoods in Rome
+
+2. **Follow-up**: "Виключи Колізей, хочу щось менш туристичне"
+   - AI maintains Rome context, excludes Colosseum, suggests local spots
+
+The system automatically maintains context and provides personalized recommendations!
+
+## 🚀 Deployment
+
+### Backend Deployment
 ```bash
-python3 run.py
+cd backend
+pip install -r requirements.txt
+python run.py
 ```
 
-Сервер запуститься на `http://localhost:8000`
-
-## 📚 API Endpoints
-
-### Основні ендпоінти:
-
-- **POST** `/api/v1/recommendations/` - Генерація рекомендацій (чат-взаємодія)
-- **GET** `/api/v1/recommendations/history` - Історія запитів
-- **GET** `/api/v1/recommendations/{id}` - Отримання конкретних рекомендацій
-- **GET** `/api/v1/recommendations/search/?q=query` - Пошук рекомендацій
-- **DELETE** `/api/v1/recommendations/{id}` - Видалення рекомендацій
-
-### Системні ендпоінти:
-
-- **GET** `/` - Головна сторінка
-- **GET** `/health` - Health check
-- **GET** `/docs` - Swagger UI
-
-## 📝 Приклади використання
-
-### Чат-взаємодія з автоматичним виявленням виключень:
-
-**Перший запит:**
+### Frontend Deployment
 ```bash
-curl -X POST "http://localhost:8000/api/v1/recommendations/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Хочу в Рим, люблю історію та макарони",
-    "num_places": 3
-  }'
+cd frontend
+npm run build
+npm start
 ```
 
-**Уточнення з виключенням:**
-```bash
-curl -X POST "http://localhost:8000/api/v1/recommendations/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "не хочу в Колізей",
-    "num_places": 3
-  }'
-```
+## 🤝 Contributing
 
-**Додаткове уточнення:**
-```bash
-curl -X POST "http://localhost:8000/api/v1/recommendations/" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "і ще не хочу в Ватикан",
-    "num_places": 3
-  }'
-```
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
 
-### Як працює автоматичне виявлення виключень:
+## 📄 License
 
-1. **Перший запит**: "Хочу в Рим, люблю історію та макарони"
-   → AI генерує 3 місця в Римі
-   → Виключення: []
+MIT License - see LICENSE file for details. 
 
-2. **Другий запит**: "не хочу в Колізей"
-   → AI розуміє, що потрібно виключити Колізей
-   → Генерує 3 місця в Римі БЕЗ Колізею
-   → Виключення: ["Колізей"]
 
-3. **Третій запит**: "і ще не хочу в Ватикан"
-   → AI розуміє, що потрібно додати Ватикан до виключень
-   → Генерує 3 місця в Римі БЕЗ Колізею та Ватикану
-   → Виключення: ["Колізей", "Ватикан"]
+## 📸 Screenshots
 
-**AI автоматично розуміє з тексту, що користувач хоче виключити!**
+### Interface
+![Interface 1](docs/images/image1.png)
+![Interface 2](docs/images/image2.png)
 
-### Отримання історії:
-```bash
-curl "http://localhost:8000/api/v1/recommendations/history"
-```
-
-## 🧪 Тестування
-
-```bash
-# Запуск тестів
-python -m pytest tests/
-
-# Тестування чат-логіки
-python test_chat_logic.py
-
-# Тестування через Swagger UI
-# Відкрийте http://localhost:8000/docs
-```
-
-## 🏗 Архітектура
-
-```
-backend/
-├── app/
-│   ├── core/           # Конфігурація, middleware, винятки
-│   ├── api/            # API роути
-│   ├── services/       # Бізнес-логіка
-│   ├── models/         # Моделі БД
-│   └── schemas/        # Pydantic схеми
-├── tests/              # Тести
-├── requirements.txt    # Залежності
-└── run.py             # Точка входу
-```
-
-## 🔧 Технології
-
-- **FastAPI** - веб-фреймворк
-- **SQLAlchemy** - ORM
-- **aiosqlite** - асинхронна SQLite
-- **OpenAI** - AI генерація
-- **Pydantic** - валідація даних
-
-## 📄 Ліцензія
-
-MIT 
